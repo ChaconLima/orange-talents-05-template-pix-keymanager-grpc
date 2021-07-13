@@ -30,6 +30,7 @@ class CadastroNovaChavePixServerGrpc(
 
         val response =  ChavePixResponse.newBuilder()
             .setIndentificadorPix( chavePix.id.toString())
+            .setIdentificadorCliente( chavePix.contaAssociada.identificadorTitular.toString())
             .build()
 
 

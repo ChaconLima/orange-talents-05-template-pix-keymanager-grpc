@@ -15,5 +15,4 @@ class KeymanagerTest {
     fun testItWorks() {
         Assertions.assertTrue(application.isRunning)
     }
-
 }

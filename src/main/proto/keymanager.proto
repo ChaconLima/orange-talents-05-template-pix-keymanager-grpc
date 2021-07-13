@@ -33,6 +33,7 @@ message NovaChavePixRequest{
   TipoConta tipoConta = 4;
 }
 message ChavePixResponse{
+  string identificadorCliente = 1;
   string indentificadorPix = 2;
 }
 
