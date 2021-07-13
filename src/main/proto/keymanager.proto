@@ -9,6 +9,31 @@ package br.com.mateuschacon.keymanager.grpc;
 
 service KeymanagerService {
   rpc send (KeymanagerRequest) returns (KeymanagerReply) {}
+
+  rpc registra(NovaChavePixRequest) returns (ChavePixResponse) {}
+}
+
+enum TipoConta{
+  DEFAULT_TIPO_CONTA = 0;
+  CONTA_CORRENTE = 1;
+  CONTA_POUPANCA = 2;
+}
+enum TipoChave{
+  DEFAULT_TIPO_CHAVE = 0;
+  CPF = 1;
+  TELEFONE = 2;
+  EMAIL = 3;
+  ALEATORIA = 4;
+
+}
+message NovaChavePixRequest{
+  string indentificadorCliente = 1;
+  TipoChave tipoChave = 2;
+  string valorChave = 3;
+  TipoConta tipoConta = 4;
+}
+message ChavePixResponse{
+  string indentificadorPix = 2;
 }
 
 message KeymanagerRequest {
