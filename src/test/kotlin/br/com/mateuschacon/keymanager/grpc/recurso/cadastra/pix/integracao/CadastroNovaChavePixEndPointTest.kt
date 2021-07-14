@@ -1,10 +1,10 @@
 package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.integracao
 
 import br.com.mateuschacon.keymanager.grpc.*
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.clientes.ContasDeClientesNoItauClient
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.InformacoesDoClienteDto
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.InstituicaoDto
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.TitularDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.ContasDeClientesNoItauClient
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InformacoesDoClienteDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InstituicaoDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.TitularDto
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix

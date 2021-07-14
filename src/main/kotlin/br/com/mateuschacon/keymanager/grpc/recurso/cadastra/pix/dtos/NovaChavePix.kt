@@ -3,6 +3,10 @@ package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos
 import br.com.mateuschacon.keymanager.grpc.TipoChave
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.BankAccountRequest
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.CreatePixKeyRequest
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.CreatePixKeyResponse
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.OwnerRequest
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ContaAssociada
 import br.com.mateuschacon.keymanager.grpc.recurso.validadores.ValidacaoUUID
@@ -29,21 +33,33 @@ data class NovaChavePix(
     @field: NotNull
     val tipoConta: TipoContaEnum?
 ){
-    fun paraChavePix(@Valid contaAssociada: ContaAssociada): ChavePix
+    fun paraNovaChavePixBcbRequest(@Valid contaAssociada: ContaAssociada): CreatePixKeyRequest{
+        return CreatePixKeyRequest(
+            keyType = this.tipoChave!!.outroValorParaChave(this.tipoChave.name),
+            key = this.valorChave!!,
+            bankAccount = BankAccountRequest(
+                participant = contaAssociada.ispb,
+                branch = contaAssociada.agencia,
+                accountNumber = contaAssociada.numero,
+                accountType = this.tipoConta!!.outroValorParaConta( this.tipoConta.name )
+            ),
+            owner = OwnerRequest(
+                type = "NATURAL_PERSON",
+                name = contaAssociada.nomeTitular,
+                taxIdNumber = contaAssociada.cpfTitular
+            )
+        )
+    }
+
+    fun paraChavePix(novaChavePixBcbResponse: CreatePixKeyResponse,
+                     @Valid contaAssociada: ContaAssociada
+    ): ChavePix
     {
         return ChavePix(
             tipoConta=this.tipoConta!!,
             contaAssociada = contaAssociada,
             chave = this.tipoChave!!,
-            valor =
-                when(this.tipoChave.name){
-                    TipoChave.ALEATORIA.name -> {
-                        UUID.randomUUID().toString()
-                    }
-                    else -> {
-                        this.valorChave
-                    }
-                }!!,
+            valor = novaChavePixBcbResponse.key,
             identificadorCliente = this.identificadorCliente!!
         )
     }

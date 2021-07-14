@@ -9,6 +9,7 @@ enum class TipoChaveEnum() {
             return false
         }
 
+        override fun outroValorParaChave(valorChave: String?): String = "DEFAULT_TIPO_CHAVE"
     },
     CPF {
         override fun valida(valorChave: String?): Boolean {
@@ -21,6 +22,8 @@ enum class TipoChaveEnum() {
                 isValid(valorChave,null)
             }
         }
+
+        override fun outroValorParaChave(valorChave: String?): String = "CPF"
     },
     TELEFONE{
         override fun valida(valorChave: String?): Boolean {
@@ -28,6 +31,8 @@ enum class TipoChaveEnum() {
 
             return valorChave.matches(regex = "^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
         }
+
+        override fun outroValorParaChave(valorChave: String?): String = "PHONE"
 
     },
     EMAIL{
@@ -41,12 +46,17 @@ enum class TipoChaveEnum() {
                 isValid(valorChave, null)
             }
         }
+
+        override fun outroValorParaChave(valorChave: String?): String = "EMAIL"
     },
     ALEATORIA{
         override fun valida(valorChave: String?): Boolean {
             return valorChave.isNullOrBlank()
         }
+
+        override fun outroValorParaChave(valorChave: String?): String = "RANDOM"
     };
 
     abstract fun valida(valorChave: String?): Boolean
+    abstract fun outroValorParaChave(valorChave: String?): String
 }

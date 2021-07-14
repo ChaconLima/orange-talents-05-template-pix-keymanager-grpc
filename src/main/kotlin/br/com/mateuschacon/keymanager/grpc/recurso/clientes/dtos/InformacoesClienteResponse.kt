@@ -1,4 +1,4 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos
+package br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ContaAssociada
@@ -20,7 +20,7 @@ data class InformacoesDoClienteDto(
     val tipo:TipoContaEnum,
     val agencia:String,
     val numero: String,
-    val titular:TitularDto,
+    val titular: TitularDto,
     val instituicao: InstituicaoDto
 ) {
 

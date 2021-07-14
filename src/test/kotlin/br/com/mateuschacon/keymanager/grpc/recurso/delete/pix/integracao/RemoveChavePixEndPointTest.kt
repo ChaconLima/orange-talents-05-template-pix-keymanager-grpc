@@ -2,12 +2,11 @@ package br.com.mateuschacon.keymanager.grpc.recurso.delete.pix.integracao
 
 import br.com.mateuschacon.keymanager.grpc.ChavePixExistenteRequest
 import br.com.mateuschacon.keymanager.grpc.KeymanagerRemoverServiceGrpc
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.InformacoesDoClienteDto
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.InstituicaoDto
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.TitularDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InformacoesDoClienteDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InstituicaoDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.TitularDto
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.integracao.CadastroNovaChavePixEndPointTest
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ChavePixRepository
 import io.grpc.ManagedChannel

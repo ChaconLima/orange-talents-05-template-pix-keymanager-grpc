@@ -1,6 +1,6 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.clientes
+package br.com.mateuschacon.keymanager.grpc.recurso.clientes
 
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.InformacoesDoClienteDto
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InformacoesDoClienteDto
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
