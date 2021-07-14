@@ -1,4 +1,4 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos
+package br.com.mateuschacon.keymanager.grpc.recurso.modelos
 
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
@@ -12,6 +12,8 @@ class ChavePix(
 
     @Enumerated(value = EnumType.STRING)
     val chave: TipoChaveEnum,
+
+    val identificadorCliente:String,
 
     val valor: String,
 

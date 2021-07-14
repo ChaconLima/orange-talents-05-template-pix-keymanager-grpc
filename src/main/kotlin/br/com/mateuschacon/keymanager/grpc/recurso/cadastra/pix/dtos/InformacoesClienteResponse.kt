@@ -1,7 +1,7 @@
 package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos.ContaAssociada
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ContaAssociada
 import io.micronaut.core.annotation.Introspected
 
 
@@ -28,7 +28,6 @@ data class InformacoesDoClienteDto(
         return ContaAssociada(
             nomeInstituicao = this.instituicao.nome,
             ispb = this.instituicao.ispb,
-            identificadorTitular = this.titular.id,
             nomeTitular = this.titular.nome,
             cpfTitular = this.titular.cpf,
             agencia = this.agencia,

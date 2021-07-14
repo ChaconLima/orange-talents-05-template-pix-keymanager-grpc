@@ -12,7 +12,7 @@ import javax.validation.Validator
 fun NovaChavePixRequest.paraNovaChavePix(): NovaChavePix =
     let { request: NovaChavePixRequest ->
         NovaChavePix(
-            indentificadorCliente = request.indentificadorCliente,
+            identificadorCliente = request.indentificadorCliente,
             tipoChave = when (request.tipoChave) {
                 TipoChave.DEFAULT_TIPO_CHAVE -> null
                 else -> TipoChaveEnum.valueOf(request.tipoChave.name)

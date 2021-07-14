@@ -7,10 +7,14 @@ option objc_class_prefix = "HLW";
 
 package br.com.mateuschacon.keymanager.grpc;
 
-service KeymanagerService {
-  rpc send (KeymanagerRequest) returns (KeymanagerReply) {}
+service KeymanagerRegistraService {
 
   rpc registra(NovaChavePixRequest) returns (ChavePixResponse) {}
+}
+
+service KeymanagerRemoverService {
+
+  rpc delete(ChavePixExistenteRequest) returns (ChavePixExistenteResponse) {}
 }
 
 enum TipoConta{
@@ -37,10 +41,11 @@ message ChavePixResponse{
   string indentificadorPix = 2;
 }
 
-message KeymanagerRequest {
-  string name = 1;
+message ChavePixExistenteRequest{
+  string identificadorCliente = 1;
+  string indentificadorPix = 2;
 }
 
-message KeymanagerReply {
-  string message = 1;
+message ChavePixExistenteResponse{
+  string ok=1;
 }

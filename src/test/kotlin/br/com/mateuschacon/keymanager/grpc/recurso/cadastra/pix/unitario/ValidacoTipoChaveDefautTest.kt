@@ -12,11 +12,11 @@ import java.util.*
 class ValidacoTipoChaveDefautTest {
 
     @Test
-    fun `não deve validar Defaut`(){
+    fun `nao deve validar Defaut`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.DEFAULT_TIPO_CHAVE,
                 valorChave = ""

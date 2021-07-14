@@ -1,9 +1,7 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.validadores
+package br.com.mateuschacon.keymanager.grpc.recurso.validadores
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.NovaChavePix
-import javax.inject.Inject
 import javax.inject.Singleton
-import javax.persistence.EntityManager
 import javax.validation.*
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.CLASS

@@ -3,10 +3,10 @@ package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos
 import br.com.mateuschacon.keymanager.grpc.TipoChave
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos.ChavePix
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos.ContaAssociada
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.validadores.ValidacaoUUID
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.validadores.ValidarChavePix
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ContaAssociada
+import br.com.mateuschacon.keymanager.grpc.recurso.validadores.ValidacaoUUID
+import br.com.mateuschacon.keymanager.grpc.recurso.validadores.ValidarChavePix
 import io.micronaut.core.annotation.Introspected
 import java.util.*
 import javax.validation.Valid
@@ -19,7 +19,7 @@ data class NovaChavePix(
 
     @field:ValidacaoUUID
     @field: NotBlank
-    val indentificadorCliente: String?,
+    val identificadorCliente: String?,
 
     @field: NotNull
     val tipoChave: TipoChaveEnum?,
@@ -43,7 +43,8 @@ data class NovaChavePix(
                     else -> {
                         this.valorChave
                     }
-                }!!
+                }!!,
+            identificadorCliente = this.identificadorCliente!!
         )
     }
 

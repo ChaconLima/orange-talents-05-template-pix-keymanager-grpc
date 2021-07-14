@@ -16,7 +16,7 @@ internal class ValidacaoTipoChaveAleatorioTest {
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.ALEATORIA,
                 valorChave = ""
@@ -33,11 +33,11 @@ internal class ValidacaoTipoChaveAleatorioTest {
     }
 
     @Test
-    fun `deve não validar telefone por causa do regex`(){
+    fun `deve nao validar telefone por causa do regex`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.ALEATORIA,
                 valorChave = "invalido"

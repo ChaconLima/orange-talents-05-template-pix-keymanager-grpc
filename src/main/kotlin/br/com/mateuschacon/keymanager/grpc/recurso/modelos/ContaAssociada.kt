@@ -1,4 +1,4 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos
+package br.com.mateuschacon.keymanager.grpc.recurso.modelos
 
 import javax.persistence.Embeddable
 import javax.validation.constraints.NotBlank
@@ -11,8 +11,6 @@ data class ContaAssociada(
     val nomeInstituicao: String,
     @field:NotBlank
     val ispb: String,
-    @field:NotBlank
-    val identificadorTitular: String,
     @field:NotBlank
     val nomeTitular: String,
     @field:NotBlank

@@ -1,11 +1,10 @@
 package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.server.grpc
 
 import br.com.mateuschacon.keymanager.grpc.ChavePixResponse
-import br.com.mateuschacon.keymanager.grpc.KeymanagerServiceGrpc
+import br.com.mateuschacon.keymanager.grpc.KeymanagerRegistraServiceGrpc
 import br.com.mateuschacon.keymanager.grpc.NovaChavePixRequest
 import br.com.mateuschacon.keymanager.grpc.error.hadlers.ErrorHandler
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.NovaChavePix
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos.ChavePix
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import io.grpc.stub.StreamObserver
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
@@ -16,7 +15,7 @@ import javax.inject.Singleton
 @ErrorHandler
 class CadastroNovaChavePixServerGrpc(
     @Inject private val novaChavePixService: CadastroNovaChavePixService,
-) : KeymanagerServiceGrpc.KeymanagerServiceImplBase() {
+) : KeymanagerRegistraServiceGrpc.KeymanagerRegistraServiceImplBase() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -30,7 +29,7 @@ class CadastroNovaChavePixServerGrpc(
 
         val response =  ChavePixResponse.newBuilder()
             .setIndentificadorPix( chavePix.id.toString())
-            .setIdentificadorCliente( chavePix.contaAssociada.identificadorTitular.toString())
+            .setIdentificadorCliente( chavePix.identificadorCliente)
             .build()
 
 

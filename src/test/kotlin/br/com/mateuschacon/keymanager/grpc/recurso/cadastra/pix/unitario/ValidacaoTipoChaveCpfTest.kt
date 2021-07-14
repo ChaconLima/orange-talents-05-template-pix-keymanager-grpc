@@ -17,7 +17,7 @@ internal class ValidacaoTipoChaveCpfTest {
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.CPF,
                 valorChave = "81958192309"
@@ -34,11 +34,11 @@ internal class ValidacaoTipoChaveCpfTest {
     }
 
     @Test
-    fun `deve não validar cpf por causa do regex`(){
+    fun `deve nao validar cpf por causa do regex`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.CPF,
                 valorChave = "81958.cpf.invalido.192309"
@@ -55,11 +55,11 @@ internal class ValidacaoTipoChaveCpfTest {
     }
 
     @Test
-    fun `deve não validar cpf por estar em branco`(){
+    fun `deve nao validar cpf por estar em branco`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.CPF,
                 valorChave = ""

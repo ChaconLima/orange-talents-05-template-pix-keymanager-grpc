@@ -7,8 +7,8 @@ import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.Instituicao
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.TitularDto
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos.ChavePix
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.repositorios.ChavePixRepository
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
+import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ChavePixRepository
 import io.grpc.ManagedChannel
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -19,20 +19,20 @@ import io.micronaut.grpc.server.GrpcServerChannel
 import io.micronaut.http.HttpResponse
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import java.util.*
 import javax.inject.Inject
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.assertThrows
 
 @MicronautTest(transactional = false)
 internal class CadastroNovaChavePixEndPointTest(
-    @Inject val chavePixRepository:ChavePixRepository,
-    @Inject val grpcClient: KeymanagerServiceGrpc.KeymanagerServiceBlockingStub
+    @Inject val chavePixRepository: ChavePixRepository,
+    @Inject val grpcClient: KeymanagerRegistraServiceGrpc.KeymanagerRegistraServiceBlockingStub
 ) {
     companion object {
         val CLIENTE_ID = UUID.randomUUID()
@@ -46,9 +46,9 @@ internal class CadastroNovaChavePixEndPointTest(
             @Bean
             fun blockingStub(
                 @GrpcChannel(GrpcServerChannel.NAME) channel: ManagedChannel
-            ): KeymanagerServiceGrpc.KeymanagerServiceBlockingStub?{
+            ): KeymanagerRegistraServiceGrpc.KeymanagerRegistraServiceBlockingStub?{
 
-                return KeymanagerServiceGrpc.newBlockingStub(channel)
+                return KeymanagerRegistraServiceGrpc.newBlockingStub(channel)
             }
         }
 
@@ -98,15 +98,16 @@ internal class CadastroNovaChavePixEndPointTest(
 
         }
         @Test
-        fun `não deve cadastrar de uma nova chave quando a mesma já existe`(){
+        fun `nao deve cadastrar de uma nova chave quando a mesma ja existe`(){
 
             //cenário
-            val chavePix:ChavePix = this.chavePixRepository.save(
+            val chavePix: ChavePix = this.chavePixRepository.save(
                 ChavePix(
                     chave = TipoChaveEnum.CPF,
                     valor = "81958192309",
                     tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                    contaAssociada = dadosDacontaReponse().paraContaAssociada()
+                    contaAssociada = dadosDacontaReponse().paraContaAssociada(),
+                    identificadorCliente = CLIENTE_ID.toString()
                 )
            )
 
@@ -114,7 +115,7 @@ internal class CadastroNovaChavePixEndPointTest(
             val thrown = assertThrows<StatusRuntimeException>{
                 this.grpcClient.registra(
                     NovaChavePixRequest .newBuilder()
-                        .setIndentificadorCliente(chavePix.contaAssociada.identificadorTitular)
+                        .setIndentificadorCliente(chavePix.identificadorCliente)
                         .setTipoChave( TipoChave.valueOf(chavePix.chave.name))
                         .setValorChave(chavePix.valor)
                         .setTipoConta(TipoConta.valueOf(chavePix.tipoConta.name))
@@ -130,7 +131,7 @@ internal class CadastroNovaChavePixEndPointTest(
 
         }
         @Test
-        fun `não deve cadastrar quando o sistema externo não encontrar os dados da conta do cliente`(){
+        fun `nao deve cadastrar quando o sistema externo nao encontrar os dados da conta do cliente`(){
             //cenário
             `when`(
                 this.contasDeClientesNoItauClient
@@ -158,7 +159,7 @@ internal class CadastroNovaChavePixEndPointTest(
 
         }
         @Test
-        fun `não deve cadastrar quando o existe erro de validação`(){
+        fun `nao deve cadastrar quando o existe erro de validacao`(){
             //cenário
 
             //ação

@@ -1,4 +1,4 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.validadores
+package br.com.mateuschacon.keymanager.grpc.recurso.validadores
 
 import javax.validation.Constraint
 import javax.validation.Payload

@@ -1,4 +1,4 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.exceptions
+package br.com.mateuschacon.keymanager.grpc.recurso.exceptions
 
 import java.lang.RuntimeException
 

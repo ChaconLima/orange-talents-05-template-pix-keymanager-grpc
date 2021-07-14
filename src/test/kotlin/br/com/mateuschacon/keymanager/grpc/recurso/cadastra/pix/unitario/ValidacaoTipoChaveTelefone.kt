@@ -16,7 +16,7 @@ internal class ValidacaoTipoChaveTelefone {
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.TELEFONE,
                 valorChave = "+5534998832651"
@@ -33,11 +33,11 @@ internal class ValidacaoTipoChaveTelefone {
     }
 
     @Test
-    fun `deve não validar telefone por causa do regex`(){
+    fun `deve nao validar telefone por causa do regex`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.TELEFONE,
                 valorChave = "telefone invalido"
@@ -54,11 +54,11 @@ internal class ValidacaoTipoChaveTelefone {
     }
 
     @Test
-    fun `deve não validar telefone por estar em branco`(){
+    fun `deve nao validar telefone por estar em branco`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
-                indentificadorCliente = UUID.randomUUID().toString(),
+                identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
                 tipoChave = TipoChaveEnum.EMAIL,
                 valorChave = ""

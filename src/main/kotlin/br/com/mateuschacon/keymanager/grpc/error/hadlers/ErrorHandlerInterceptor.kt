@@ -1,6 +1,7 @@
 package br.com.mateuschacon.keymanager.grpc.error.hadlers
 
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.exceptions.ExisteChavePixException
+import br.com.mateuschacon.keymanager.grpc.recurso.exceptions.ExisteChavePixException
+import br.com.mateuschacon.keymanager.grpc.recurso.exceptions.NaoExisteChavePixException
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import io.micronaut.aop.InterceptorBean
@@ -32,6 +33,10 @@ class ErrorHandlerInterceptor : MethodInterceptor<Any,Any>{
                     Status.ALREADY_EXISTS.withCause(e.cause)
                                          .withDescription(e.message)
                                          .asRuntimeException()
+                is NaoExisteChavePixException->
+                    Status.NOT_FOUND.withCause(e.cause)
+                                    .withDescription(e.message)
+                                    .asRuntimeException()
                 else->
                     Status.NOT_FOUND.withCause(e).withDescription(e.message).asRuntimeException()
             }

@@ -3,16 +3,15 @@ package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.server.grpc
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.clientes.ContasDeClientesNoItauClient
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.InformacoesDoClienteDto
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.NovaChavePix
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.exceptions.ExisteChavePixException
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.modelos.ChavePix
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.repositorios.ChavePixRepository
+import br.com.mateuschacon.keymanager.grpc.recurso.exceptions.ExisteChavePixException
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
+import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ChavePixRepository
 import io.micronaut.validation.Validated
 import org.slf4j.LoggerFactory
 import java.lang.IllegalArgumentException
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 
 @Validated
@@ -35,7 +34,7 @@ class CadastroNovaChavePixService(
         val informacoesDoCliente: InformacoesDoClienteDto =
             this.contasDeClientesNoItauClient
                 .buscaContaPorTipo(
-                    novaChavePix.indentificadorCliente!!,
+                    novaChavePix.identificadorCliente!!,
                     novaChavePix.tipoConta!!.name
                 ).body() ?: throw IllegalArgumentException("Cliente não Encontrado") //2
 
