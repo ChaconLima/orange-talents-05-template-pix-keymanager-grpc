@@ -1,26 +1,25 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.unitario
+package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.unitario.enums
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.NovaChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.integracao.CadastroNovaChavePixEndPointTest
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 
 @MicronautTest(transactional = false)
-internal class ValidacaoTipoChaveCpfTest {
+internal class TipoChaveTelefone {
 
     @Test
-    fun `deve validar o cpf`(){
+    fun `deve validar o telefone`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
                 identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                tipoChave = TipoChaveEnum.CPF,
-                valorChave = "81958192309"
+                tipoChave = TipoChaveEnum.TELEFONE,
+                valorChave = "+5534998832651"
             )
 
         //ação
@@ -29,19 +28,19 @@ internal class ValidacaoTipoChaveCpfTest {
 
         //validação
         with(isValid){
-            assertEquals( isValid, true)
+            Assertions.assertEquals( true, isValid)
         }
     }
 
     @Test
-    fun `deve nao validar cpf por causa do regex`(){
+    fun `deve nao validar telefone por causa do regex`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
                 identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                tipoChave = TipoChaveEnum.CPF,
-                valorChave = "81958.cpf.invalido.192309"
+                tipoChave = TipoChaveEnum.TELEFONE,
+                valorChave = "telefone invalido"
             )
 
         //ação
@@ -50,18 +49,18 @@ internal class ValidacaoTipoChaveCpfTest {
 
         //validação
         with(isValid){
-            assertEquals( isValid, false)
+            Assertions.assertEquals( false, isValid)
         }
     }
 
     @Test
-    fun `deve nao validar cpf por estar em branco`(){
+    fun `deve nao validar telefone por estar em branco`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
                 identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                tipoChave = TipoChaveEnum.CPF,
+                tipoChave = TipoChaveEnum.EMAIL,
                 valorChave = ""
             )
 
@@ -71,9 +70,19 @@ internal class ValidacaoTipoChaveCpfTest {
 
         //validação
         with(isValid){
-            assertEquals( isValid, false)
+            Assertions.assertEquals( false, isValid)
         }
     }
+    @Test
+    fun `deve devolver outro valor `(){
+        //senario
+        val enum = TipoChaveEnum.TELEFONE
+        //ação
+        val isValid: String = enum.outroValorParaChave( enum.name )
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( "PHONE", isValid  )
+        }
 
-
+    }
 }

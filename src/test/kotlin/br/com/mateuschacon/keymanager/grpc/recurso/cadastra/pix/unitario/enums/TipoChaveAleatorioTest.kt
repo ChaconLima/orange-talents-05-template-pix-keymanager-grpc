@@ -1,67 +1,24 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.unitario
+package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.unitario.enums
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.NovaChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
-import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.integracao.CadastroNovaChavePixEndPointTest
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 
 @MicronautTest(transactional = false)
-internal class ValidacaoTipoChaveEmailTest {
+internal class TipoChaveAleatorioTest {
 
     @Test
-    fun `deve validar o email`(){
+    fun `deve validar o telefone`(){
         //cenario
         val novaChave: NovaChavePix =
             NovaChavePix(
                 identificadorCliente = UUID.randomUUID().toString(),
                 tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                tipoChave = TipoChaveEnum.EMAIL,
-                valorChave = "tabajaras@tabajaras.com"
-            )
-
-        //ação
-        val isValid: Boolean =
-            novaChave.tipoChave!!.valida(novaChave.valorChave)
-
-        //validação
-        with(isValid){
-            assertEquals( isValid, true)
-        }
-    }
-
-    @Test
-    fun `deve nao validar email por causa do regex`(){
-        //cenario
-        val novaChave: NovaChavePix =
-            NovaChavePix(
-                identificadorCliente = UUID.randomUUID().toString(),
-                tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                tipoChave = TipoChaveEnum.EMAIL,
-                valorChave = "email.invalido"
-            )
-
-        //ação
-        val isValid: Boolean =
-            novaChave.tipoChave!!.valida(novaChave.valorChave)
-
-        //validação
-        with(isValid){
-            assertEquals( isValid, false)
-        }
-    }
-
-    @Test
-    fun `deve nao validar email por estar em branco`(){
-        //cenario
-        val novaChave: NovaChavePix =
-            NovaChavePix(
-                identificadorCliente = UUID.randomUUID().toString(),
-                tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                tipoChave = TipoChaveEnum.EMAIL,
+                tipoChave = TipoChaveEnum.ALEATORIA,
                 valorChave = ""
             )
 
@@ -71,7 +28,42 @@ internal class ValidacaoTipoChaveEmailTest {
 
         //validação
         with(isValid){
-            assertEquals( isValid, false)
+            Assertions.assertEquals( true, isValid)
         }
+    }
+
+    @Test
+    fun `deve nao validar telefone por causa do regex`(){
+        //cenario
+        val novaChave: NovaChavePix =
+            NovaChavePix(
+                identificadorCliente = UUID.randomUUID().toString(),
+                tipoConta = TipoContaEnum.CONTA_CORRENTE,
+                tipoChave = TipoChaveEnum.ALEATORIA,
+                valorChave = "invalido"
+            )
+
+        //ação
+        val isValid: Boolean =
+            novaChave.tipoChave!!.valida(novaChave.valorChave)
+
+        //validação
+        with(isValid){
+            Assertions.assertEquals( false, isValid)
+        }
+    }
+
+    @Test
+    fun `deve devolver outro valor `(){
+        //senario
+        val enum = TipoChaveEnum.ALEATORIA
+        //ação
+        val isValid: String = enum.outroValorParaChave( enum.name )
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( "RANDOM", isValid)
+        }
+
+
     }
 }

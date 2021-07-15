@@ -2,11 +2,10 @@ package br.com.mateuschacon.keymanager.grpc.recurso.delete.pix.integracao
 
 import br.com.mateuschacon.keymanager.grpc.ChavePixExistenteRequest
 import br.com.mateuschacon.keymanager.grpc.KeymanagerRemoverServiceGrpc
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InformacoesDoClienteDto
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InstituicaoDto
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.TitularDto
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.SistemaPixdoBcbClient
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.*
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ChavePixRepository
 import io.grpc.ManagedChannel
@@ -16,9 +15,13 @@ import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
 import io.micronaut.grpc.server.GrpcServerChannel
+import io.micronaut.http.HttpResponse
+import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import org.mockito.Mockito
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
@@ -27,7 +30,11 @@ internal class RemoveChavePixEndPointTest(
     @Inject val chavePixRepository: ChavePixRepository,
     @Inject val grpcCliente: KeymanagerRemoverServiceGrpc.KeymanagerRemoverServiceBlockingStub
 ){
-
+    companion object{
+        val VALOR_CHAVE =UUID.randomUUID().toString()
+        val CLIENTE_ID=UUID.randomUUID().toString()
+        val CLIENTE_ISPB = "303030"
+    }
     // *************************************************************
     // Conf
     // *************************************************************
@@ -40,6 +47,14 @@ internal class RemoveChavePixEndPointTest(
 
             return KeymanagerRemoverServiceGrpc.newBlockingStub(channel)
         }
+    }
+
+    @Inject
+    lateinit var sistemaPixdoBcbClient: SistemaPixdoBcbClient
+
+    @MockBean(SistemaPixdoBcbClient::class)
+    fun sistemaPixdoBcbClient(): SistemaPixdoBcbClient?{
+        return Mockito.mock(SistemaPixdoBcbClient::class.java)
     }
 
     @BeforeEach
@@ -55,6 +70,11 @@ internal class RemoveChavePixEndPointTest(
         val chavePix = this.dadosChavePix()
         this.chavePixRepository.save(chavePix)
 
+        Mockito.`when`(
+            this.sistemaPixdoBcbClient
+                .deletar( key = VALOR_CHAVE, deletePixKeyRequest = this.dadosDeRemoverPixBcbRequest())
+        ).thenReturn(HttpResponse.ok(this.dadosDeRemoverPixBcbResponse()))
+
         //ação
         val response = this.grpcCliente.delete(
             ChavePixExistenteRequest.newBuilder()
@@ -66,6 +86,33 @@ internal class RemoveChavePixEndPointTest(
         //validação
         with(response){
             assertEquals( "Remoção Concluída", response.ok)
+        }
+    }
+    @Test
+    fun `nao deve excluir o dado cadastrado, pois o retorno do Sistema do BCB retornou not found`(){
+        //senario
+        val chavePix = this.dadosChavePix()
+        this.chavePixRepository.save(chavePix)
+
+        Mockito.`when`(
+            this.sistemaPixdoBcbClient
+                .deletar( key = VALOR_CHAVE, deletePixKeyRequest = this.dadosDeRemoverPixBcbRequest())
+        ).thenReturn(HttpResponse.notFound())
+
+        //ação
+        val thrown = assertThrows<StatusRuntimeException> {
+            this.grpcCliente.delete(
+                ChavePixExistenteRequest.newBuilder()
+                    .setIdentificadorCliente(chavePix.identificadorCliente)
+                    .setIndentificadorPix(chavePix.id.toString())
+                    .build()
+            )
+        }
+
+        //validação
+        with(thrown){
+            assertEquals( Status.NOT_FOUND.code, status.code)
+            assertEquals("Não Foi possivel excluir do Sistema do BCB", status.description)
         }
     }
     @Test
@@ -86,7 +133,6 @@ internal class RemoveChavePixEndPointTest(
             assertEquals(Status.NOT_FOUND.code, status.code)
         }
     }
-
     @Test
     fun `nao deve excluir o dado cadastrado pois o cliente nao pertence a chave cadastrada`(){
         //senario
@@ -110,9 +156,8 @@ internal class RemoveChavePixEndPointTest(
             assertEquals(Status.NOT_FOUND.code, status.code)
         }
     }
-
     @Test
-    fun `nao deve cadastrar pois foi enviado dados errados`(){
+    fun `nao deve excluir pois foi enviado dados errados`(){
         //senario
 
         //ação
@@ -135,8 +180,8 @@ internal class RemoveChavePixEndPointTest(
     // Entidade
     // *************************************************************
     private fun dadosChavePix(): ChavePix {
-        val idChave = UUID.randomUUID().toString()
-        val idCliente = UUID.randomUUID().toString()
+        val valorChave = VALOR_CHAVE.toString()
+        val idCliente = CLIENTE_ID.toString()
 
         val informacoes =  InformacoesDoClienteDto(
             tipo = TipoContaEnum.CONTA_CORRENTE,
@@ -149,7 +194,7 @@ internal class RemoveChavePixEndPointTest(
             ),
             instituicao = InstituicaoDto(
                 nome = "Tabajaras Company",
-                ispb = "303030"
+                ispb = CLIENTE_ISPB
             )
         )
 
@@ -157,8 +202,19 @@ internal class RemoveChavePixEndPointTest(
             tipoConta = TipoContaEnum.CONTA_CORRENTE,
             chave = TipoChaveEnum.ALEATORIA,
             identificadorCliente = idCliente,
-            valor = idChave,
+            valor = valorChave,
             contaAssociada = informacoes.paraContaAssociada()
+        )
+    }
+    private fun dadosDeRemoverPixBcbResponse(): DeletePixKeyResponse{
+        return DeletePixKeyResponse(
+            deletedAt = LocalDateTime.now().toString()
+        )
+    }
+    private fun dadosDeRemoverPixBcbRequest(): DeletePixKeyRequest {
+        return DeletePixKeyRequest(
+            key = VALOR_CHAVE,
+            participant = CLIENTE_ISPB
         )
     }
 

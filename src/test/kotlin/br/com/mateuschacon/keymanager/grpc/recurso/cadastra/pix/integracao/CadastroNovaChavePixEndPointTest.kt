@@ -1,12 +1,11 @@
 package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.integracao
 
 import br.com.mateuschacon.keymanager.grpc.*
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.ContasDeClientesNoItauClient
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InformacoesDoClienteDto
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.InstituicaoDto
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.TitularDto
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.ContasDeClientesNoItauClient
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.SistemaPixdoBcbClient
+import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.*
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ChavePixRepository
 import io.grpc.ManagedChannel
@@ -26,6 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
@@ -36,6 +36,11 @@ internal class CadastroNovaChavePixEndPointTest(
 ) {
     companion object {
         val CLIENTE_ID = UUID.randomUUID()
+        val CLIENTE_CPF = "81958192309"
+        val CLIENTE_NOME = "Juraci da Cunha Neves"
+        val CLIENTE_AGENCIA  = "0333"
+        val CLIENTE_NUMERO = "1100"
+        val CLIENTE_ISPB = "303030"
     }
 
     // *************************************************************
@@ -55,9 +60,17 @@ internal class CadastroNovaChavePixEndPointTest(
         @Inject
         lateinit var contasDeClientesNoItauClient: ContasDeClientesNoItauClient
 
+        @Inject
+        lateinit var sistemaPixdoBcbClient: SistemaPixdoBcbClient
+
         @MockBean(ContasDeClientesNoItauClient::class)
         fun contasDeClientesNoItauClient(): ContasDeClientesNoItauClient?{
             return Mockito.mock(ContasDeClientesNoItauClient::class.java)
+        }
+
+        @MockBean(SistemaPixdoBcbClient::class)
+        fun sistemaPixdoBcbClient(): SistemaPixdoBcbClient?{
+            return Mockito.mock(SistemaPixdoBcbClient::class.java)
         }
 
         @BeforeEach
@@ -71,28 +84,31 @@ internal class CadastroNovaChavePixEndPointTest(
         @Test
         fun `deve registrar uma nova chave pix`(){
 
-            //cenário
+
+            //cenário -------------------------------------------------------
+
             `when`(
                 this.contasDeClientesNoItauClient
                     .buscaContaPorTipo(
                         idCliente = CLIENTE_ID.toString(),
-                        tipo= "CONTA_CORRENTE")
-                    ).thenReturn(HttpResponse.ok(dadosDacontaReponse())
-            )
+                        tipo="CONTA_CORRENTE")
+            ).thenReturn(HttpResponse.ok(this.dadosInformacoesDoCliente()))
 
-            //ação
-            val chavePixResponse: ChavePixResponse = this.grpcClient.registra(
-                NovaChavePixRequest .newBuilder()
-                                    .setIndentificadorCliente(CLIENTE_ID.toString())
-                                    .setTipoChave(TipoChave.CPF)
-                                    .setValorChave("81958192309")
-                                    .setTipoConta(TipoConta.CONTA_CORRENTE)
-                                    .build()
-            )
+            `when`(
+                this.sistemaPixdoBcbClient
+                    .cadastramento(this.dadosNovaChavePixBcBRequest())
+            ).thenReturn(HttpResponse.ok(this.dadosNovaChavePixBdbResponse()))
 
-            //validação
+            //ação  -------------------------------------------------------
+
+            val chavePixResponse: ChavePixResponse =
+                this.grpcClient.registra(this.dadosNovaChavePixRequest())
+
+
+            //validação  -------------------------------------------------------
+
             with(chavePixResponse){
-                assertEquals(CLIENTE_ID.toString(), identificadorCliente )
+                assertEquals(CLIENTE_ID.toString() , identificadorCliente )
                 assertNotNull(indentificadorPix)
             }
 
@@ -101,12 +117,14 @@ internal class CadastroNovaChavePixEndPointTest(
         fun `nao deve cadastrar de uma nova chave quando a mesma ja existe`(){
 
             //cenário
+            val novaChavePixRequest = this.dadosNovaChavePixRequest()
+
             val chavePix: ChavePix = this.chavePixRepository.save(
                 ChavePix(
                     chave = TipoChaveEnum.CPF,
-                    valor = "81958192309",
+                    valor = CLIENTE_CPF,
                     tipoConta = TipoContaEnum.CONTA_CORRENTE,
-                    contaAssociada = dadosDacontaReponse().paraContaAssociada(),
+                    contaAssociada = this.dadosInformacoesDoCliente().paraContaAssociada(),
                     identificadorCliente = CLIENTE_ID.toString()
                 )
            )
@@ -131,7 +149,7 @@ internal class CadastroNovaChavePixEndPointTest(
 
         }
         @Test
-        fun `nao deve cadastrar quando o sistema externo nao encontrar os dados da conta do cliente`(){
+        fun `nao deve cadastrar quando o sistema externo do Banco Itau nao encontrar os dados da conta do cliente`(){
             //cenário
             `when`(
                 this.contasDeClientesNoItauClient
@@ -159,6 +177,33 @@ internal class CadastroNovaChavePixEndPointTest(
 
         }
         @Test
+        fun `nao deve cadastrar quando o sistema externo do Sistema BCB retornar erro`(){
+            //cenário
+            `when`(
+                this.contasDeClientesNoItauClient
+                    .buscaContaPorTipo(
+                        idCliente = CLIENTE_ID.toString(),
+                        tipo="CONTA_CORRENTE")
+            ).thenReturn(HttpResponse.ok(this.dadosInformacoesDoCliente()))
+
+            `when`(
+                this.sistemaPixdoBcbClient
+                    .cadastramento(this.dadosNovaChavePixBcBRequest())
+            ).thenReturn(HttpResponse.notFound())
+
+            //açao
+            val thrown = assertThrows<StatusRuntimeException>{
+                this.grpcClient.registra(this.dadosNovaChavePixRequest())
+            }
+
+            //verificação
+            with(thrown){
+                assertEquals( Status.NOT_FOUND.code, status.code)
+                assertEquals( "Erro ao Cadastrar no Sistema do BCB", status.description)
+            }
+
+        }
+        @Test
         fun `nao deve cadastrar quando o existe erro de validacao`(){
             //cenário
 
@@ -167,9 +212,9 @@ internal class CadastroNovaChavePixEndPointTest(
                 this.grpcClient.registra(
                     NovaChavePixRequest .newBuilder()
                         .setIndentificadorCliente(CLIENTE_ID.toString())
-                        .setTipoChave(TipoChave.CPF)
+                        .setTipoChave(TipoChave.DEFAULT_TIPO_CHAVE)
                         .setValorChave("8195819230-9")
-                        .setTipoConta(TipoConta.CONTA_CORRENTE)
+                        .setTipoConta(TipoConta.DEFAULT_TIPO_CONTA)
                         .build()
                 )
             }
@@ -183,20 +228,52 @@ internal class CadastroNovaChavePixEndPointTest(
     // *************************************************************
     // Dtos
     // *************************************************************
-        private fun dadosDacontaReponse(): InformacoesDoClienteDto {
+        private fun dadosInformacoesDoCliente(): InformacoesDoClienteDto {
 
             return InformacoesDoClienteDto(
                 tipo = TipoContaEnum.CONTA_CORRENTE,
-                agencia = "0333",
-                numero = "1100",
+                agencia = CLIENTE_AGENCIA,
+                numero = CLIENTE_NUMERO,
                 titular = TitularDto(
                     id = CLIENTE_ID.toString(),
-                    nome = "Juraci da Cunha Neves",
-                    cpf = "63657520325"
+                    nome = CLIENTE_NOME,
+                    cpf = CLIENTE_CPF
                 ),
                 instituicao = InstituicaoDto(
                     nome = "Tabajaras Company",
-                    ispb = "303030"
+                    ispb = CLIENTE_ISPB
+                )
+            )
+        }
+
+        private fun dadosNovaChavePixBdbResponse(): CreatePixKeyResponse{
+            return CreatePixKeyResponse(
+                key =CLIENTE_CPF,
+                createdAt = LocalDateTime.now().toString()
+            )
+        }
+
+        private fun dadosNovaChavePixRequest() = NovaChavePixRequest.newBuilder()
+            .setIndentificadorCliente(CLIENTE_ID.toString())
+            .setTipoChave(TipoChave.CPF)
+            .setValorChave(CLIENTE_CPF)
+            .setTipoConta(TipoConta.CONTA_CORRENTE)
+            .build()
+
+        private fun dadosNovaChavePixBcBRequest(): CreatePixKeyRequest{
+            return CreatePixKeyRequest(
+                key = CLIENTE_CPF,
+                keyType = TipoChaveEnum.CPF.name,
+                bankAccount = BankAccountRequest(
+                    participant = CLIENTE_ISPB,
+                    branch = CLIENTE_AGENCIA,
+                    accountNumber = CLIENTE_NUMERO,
+                    accountType = TipoContaEnum.CONTA_CORRENTE.outroValorParaConta(TipoContaEnum.CONTA_CORRENTE.name)
+                ),
+                owner = OwnerRequest(
+                    type = "NATURAL_PERSON",
+                    name = CLIENTE_NOME,
+                    taxIdNumber =CLIENTE_CPF
                 )
             )
         }

@@ -1,4 +1,4 @@
-package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.unitario
+package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.unitario.enums
 
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.dtos.NovaChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveEnum
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 @MicronautTest(transactional = false)
-class ValidacoTipoChaveDefautTest {
+class TipoChaveDefautTest {
 
     @Test
     fun `nao deve validar Defaut`(){
@@ -28,7 +28,20 @@ class ValidacoTipoChaveDefautTest {
 
         //validação
         with(isValid){
-            Assertions.assertEquals(isValid, false)
+            Assertions.assertEquals(false, isValid)
         }
+    }
+
+    @Test
+    fun `deve devolver outro valor `(){
+        //senario
+        val enum = TipoChaveEnum.DEFAULT_TIPO_CHAVE
+        //ação
+        val isValid: String = enum.outroValorParaChave( enum.name )
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( "DEFAULT_TIPO_CHAVE", isValid  )
+        }
+
     }
 }
