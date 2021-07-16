@@ -17,6 +17,12 @@ service KeymanagerRemoverService {
   rpc delete(ChavePixExistenteRequest) returns (ChavePixExistenteResponse) {}
 }
 
+service KeymanagerDetalhamentoService {
+
+  rpc detalha(ChavePixDetalhesRequest) returns (ChavePixDetalhesResponse) {}
+
+}
+
 enum TipoConta{
   DEFAULT_TIPO_CONTA = 0;
   CONTA_CORRENTE = 1;
@@ -47,5 +53,29 @@ message ChavePixExistenteRequest{
 }
 
 message ChavePixExistenteResponse{
-  string ok=1;
+  string ok = 1;
+}
+message ChavePixDetalhesRequest{
+  ChavePixResponse identificadoresChave = 1;
+  string valorChavePix = 2;
+}
+
+message Titular{
+  string nome = 1;
+  string cpf = 2;
+}
+message ContaVinculada{
+  string nomeInstituicaoFinanceira = 1;
+  string agencia = 2;
+  string numeroConta = 3;
+  TipoConta tipoConta = 4;
+  string ispb = 5;
+}
+message ChavePixDetalhesResponse{
+  ChavePixResponse identificadoresChave = 1;
+  TipoChave tipoChave = 2;
+  string valorChave = 3;
+  Titular titular = 4;
+  ContaVinculada contaVinculada = 5;
+  string criadoEm = 6;
 }

@@ -3,15 +3,15 @@ package br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 
-enum class TipoChaveEnum() {
-    DEFAULT_TIPO_CHAVE {
+enum class TipoChaveEnum(val chave:String) {
+    DEFAULT_TIPO_CHAVE(chave = "DEFAULT_TIPO_CHAVE") {
         override fun valida(valorChave: String?): Boolean {
             return false
         }
 
         override fun outroValorParaChave(valorChave: String?): String = "DEFAULT_TIPO_CHAVE"
     },
-    CPF {
+    CPF(chave = "CPF") {
         override fun valida(valorChave: String?): Boolean {
             if (valorChave.isNullOrBlank()) return false
 
@@ -25,7 +25,7 @@ enum class TipoChaveEnum() {
 
         override fun outroValorParaChave(valorChave: String?): String = "CPF"
     },
-    TELEFONE{
+    TELEFONE(chave = "PHONE"){
         override fun valida(valorChave: String?): Boolean {
             if (valorChave.isNullOrBlank()) return false
 
@@ -35,7 +35,7 @@ enum class TipoChaveEnum() {
         override fun outroValorParaChave(valorChave: String?): String = "PHONE"
 
     },
-    EMAIL{
+    EMAIL(chave = "EMAIL"){
         override fun valida(valorChave: String?): Boolean {
 
             if (valorChave.isNullOrBlank()) return false
@@ -49,7 +49,7 @@ enum class TipoChaveEnum() {
 
         override fun outroValorParaChave(valorChave: String?): String = "EMAIL"
     },
-    ALEATORIA{
+    ALEATORIA(chave = "RANDOM"){
         override fun valida(valorChave: String?): Boolean {
             return valorChave.isNullOrBlank()
         }
@@ -59,4 +59,8 @@ enum class TipoChaveEnum() {
 
     abstract fun valida(valorChave: String?): Boolean
     abstract fun outroValorParaChave(valorChave: String?): String
+    companion object {
+        private val map = TipoChaveEnum.values().associateBy(TipoChaveEnum::chave)
+        fun reversoVindoBCB(type: String) = map[type]
+    }
 }
