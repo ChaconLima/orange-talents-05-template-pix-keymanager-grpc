@@ -5,6 +5,8 @@ import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoChaveE
 import br.com.mateuschacon.keymanager.grpc.recurso.cadastra.pix.enums.TipoContaEnum
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ContaAssociada
+import br.com.mateuschacon.keymanager.grpc.recurso.modelos.Participantesstrport
+import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ParticipantesstrportRepository
 
 data class BankAccountResponse(
     val participant:String,
@@ -25,7 +27,7 @@ data class DetalhesChavePixBcbResponse(
     val owner: OwnerResponse,
     val createdAt: String
 ){
-    fun paraChavePix():ChavePix {
+    fun paraChavePix(participantesstrportRepository: ParticipantesstrportRepository):ChavePix {
 
         val tipoConta: TipoContaEnum = TipoContaEnum.valueOf(
             TipoContaEnum.reversoVindoBCB(this.bankAccount.accountType).toString())
@@ -33,6 +35,7 @@ data class DetalhesChavePixBcbResponse(
         val tipoChave: TipoChaveEnum = TipoChaveEnum.valueOf(
             TipoChaveEnum.reversoVindoBCB(this.keyType).toString())
 
+        val instituicao = participantesstrportRepository.findByIsbp(this.bankAccount.participant).get()
 
         return ChavePix(
             chave = tipoChave,
@@ -41,7 +44,7 @@ data class DetalhesChavePixBcbResponse(
             tipoConta = tipoConta,
             contaAssociada = ContaAssociada(
                 nomeTitular = this.owner.name,
-                nomeInstituicao = "",
+                nomeInstituicao = instituicao.nomeReduzido.toUpperCase(),
                 ispb = this.bankAccount.participant,
                 cpfTitular = this.owner.taxIdNumber,
                 agencia = this.bankAccount.branch,

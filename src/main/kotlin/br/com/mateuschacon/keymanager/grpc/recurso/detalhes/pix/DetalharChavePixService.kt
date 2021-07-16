@@ -1,10 +1,10 @@
 package br.com.mateuschacon.keymanager.grpc.recurso.detalhes.pix
 
 import br.com.mateuschacon.keymanager.grpc.recurso.clientes.SistemaPixdoBcbClient
-import br.com.mateuschacon.keymanager.grpc.recurso.clientes.dtos.DeletePixKeyRequest
 import br.com.mateuschacon.keymanager.grpc.recurso.exceptions.NaoExisteChavePixException
 import br.com.mateuschacon.keymanager.grpc.recurso.modelos.ChavePix
 import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ChavePixRepository
+import br.com.mateuschacon.keymanager.grpc.recurso.repositorios.ParticipantesstrportRepository
 import br.com.mateuschacon.keymanager.grpc.recurso.validadores.ValidacaoUUID
 import io.micronaut.validation.Validated
 import org.slf4j.LoggerFactory
@@ -12,7 +12,6 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.validation.Valid
-import javax.validation.constraints.Max
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
@@ -20,7 +19,8 @@ import javax.validation.constraints.Size
 @Validated
 class DetalharChavePixService(
     @Inject val chavePixRepository: ChavePixRepository,
-    @Inject val sistemaPixdoBcbClient: SistemaPixdoBcbClient
+    @Inject val sistemaPixdoBcbClient: SistemaPixdoBcbClient,
+    @Inject val participantesstrportRepository: ParticipantesstrportRepository
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,7 +53,7 @@ class DetalharChavePixService(
             this.sistemaPixdoBcbClient.detalhes(valorChavePix)
                 .body() ?: throw NaoExisteChavePixException("Não existe registro de chave com o valor: $valorChavePix")
 
-        return chavePix.paraChavePix().also {
+        return chavePix.paraChavePix(this.participantesstrportRepository).also {
             this.logger.info("Requisição de Detalhamento Por Valor Chave Concluida")
         }
     }
