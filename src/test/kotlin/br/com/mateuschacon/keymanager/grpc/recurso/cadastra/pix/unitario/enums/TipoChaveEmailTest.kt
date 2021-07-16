@@ -88,4 +88,17 @@ internal class TipoChaveEmailTest {
         }
 
     }
+
+    @Test
+    fun `deve devolver o valor original quando passado uma variavel `(){
+
+        //ação
+        val isValid: TipoChaveEnum? = TipoChaveEnum.reversoVindoBCB("EMAIL")
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( TipoChaveEnum.EMAIL, isValid)
+        }
+
+
+    }
 }

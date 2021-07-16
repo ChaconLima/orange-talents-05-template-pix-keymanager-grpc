@@ -66,4 +66,17 @@ internal class TipoChaveAleatorioTest {
 
 
     }
+
+    @Test
+    fun `deve devolver o valor original quando passado uma variavel `(){
+
+        //ação
+        val isValid: TipoChaveEnum? = TipoChaveEnum.reversoVindoBCB("RANDOM")
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( TipoChaveEnum.ALEATORIA, isValid)
+        }
+
+
+    }
 }

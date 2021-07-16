@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import javax.transaction.Transactional
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -23,19 +24,19 @@ class DetalharChavePixService(
     @Inject val participantesstrportRepository: ParticipantesstrportRepository
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
-
+    @Transactional
     fun detalhamentoPorIdentificadores(
         @Valid @ValidacaoUUID identificadorCliente: String,
         @Valid @ValidacaoUUID indentificadorPix: String
     ) :ChavePix = also{
-        this.logger.info("Requisição de Detalhamento Por Valor Identificadores Iniciada")
+        this.logger.info("Requisição de Detalhamento Por Identificadores Iniciada")
     }.let{
         this.isValid(UUID.fromString(indentificadorPix), identificadorCliente)
     }.also {
-        this.logger.info("Requisição de Detalhamento PorIdentificadores Concluida")
+        this.logger.info("Requisição de Detalhamento Por Identificadores Concluida")
     }
 
-
+    @Transactional
     fun detalhamentoPorValorChave(
        @Valid @NotBlank @Size(max=77) valorChavePix: String
     ): ChavePix {

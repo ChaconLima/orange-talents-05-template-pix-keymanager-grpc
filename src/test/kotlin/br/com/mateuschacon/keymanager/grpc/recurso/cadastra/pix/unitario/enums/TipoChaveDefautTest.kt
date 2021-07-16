@@ -44,4 +44,17 @@ class TipoChaveDefautTest {
         }
 
     }
+
+    @Test
+    fun `deve devolver o valor original quando passado uma variavel `(){
+
+        //ação
+        val isValid: TipoChaveEnum? = TipoChaveEnum.reversoVindoBCB("DEFAULT_TIPO_CHAVE")
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( TipoChaveEnum.DEFAULT_TIPO_CHAVE, isValid)
+        }
+
+
+    }
 }

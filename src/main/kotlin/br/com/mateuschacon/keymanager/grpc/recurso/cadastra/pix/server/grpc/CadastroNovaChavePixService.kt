@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import javax.transaction.Transactional
 import javax.validation.Valid
 
 @Validated
@@ -24,7 +25,7 @@ class CadastroNovaChavePixService(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-
+    @Transactional
     fun cadastro(
         @Valid novaChavePix: NovaChavePix
     ): ChavePix {

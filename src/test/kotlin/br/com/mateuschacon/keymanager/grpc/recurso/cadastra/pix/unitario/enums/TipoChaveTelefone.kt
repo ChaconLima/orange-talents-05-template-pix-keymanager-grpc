@@ -85,4 +85,17 @@ internal class TipoChaveTelefone {
         }
 
     }
+
+    @Test
+    fun `deve devolver o valor original quando passado uma variavel `(){
+
+        //ação
+        val isValid: TipoChaveEnum? = TipoChaveEnum.reversoVindoBCB("PHONE")
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( TipoChaveEnum.TELEFONE, isValid)
+        }
+
+
+    }
 }

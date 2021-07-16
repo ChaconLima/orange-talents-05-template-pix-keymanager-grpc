@@ -21,4 +21,17 @@ class TipoContaPoupancaTest {
         }
 
     }
+
+    @Test
+    fun `deve devolver o valor original quando passado uma variavel `(){
+
+        //ação
+        val isValid: TipoContaEnum? = TipoContaEnum.reversoVindoBCB("SVGS")
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( TipoContaEnum.CONTA_POUPANCA, isValid)
+        }
+
+
+    }
 }

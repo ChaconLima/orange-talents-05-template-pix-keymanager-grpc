@@ -21,4 +21,16 @@ class TipoContaCorrenteTest {
         }
 
     }
+    @Test
+    fun `deve devolver o valor original quando passado uma variavel `(){
+
+        //ação
+        val isValid: TipoContaEnum? = TipoContaEnum.reversoVindoBCB("CACC")
+        //validacao
+        with(isValid){
+            Assertions.assertEquals( TipoContaEnum.CONTA_CORRENTE, isValid)
+        }
+
+
+    }
 }
