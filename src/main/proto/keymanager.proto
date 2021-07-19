@@ -6,6 +6,7 @@ option java_outer_classname = "Keymanager";
 option objc_class_prefix = "HLW";
 
 package br.com.mateuschacon.keymanager.grpc;
+import "google/protobuf/timestamp.proto";
 
 service KeymanagerRegistraService {
 
@@ -20,6 +21,13 @@ service KeymanagerRemoverService {
 service KeymanagerDetalhamentoService {
 
   rpc detalha(ChavePixDetalhesRequest) returns (ChavePixDetalhesResponse) {}
+
+}
+
+
+service KeymanagerListagemService {
+
+  rpc listar(ChavePixClienteRequest) returns (ChavePixClienteResponse) {}
 
 }
 
@@ -78,4 +86,23 @@ message ChavePixDetalhesResponse{
   Titular titular = 4;
   ContaVinculada contaVinculada = 5;
   string criadoEm = 6;
+}
+
+message ChavePixClienteRequest{
+  string identificadorCliente = 1;
+}
+
+message ChavePixClienteResponse{
+
+  message ChavePixDetalhesClienteResponse{
+
+    TipoChave tipoChave = 1;
+    string valorChave = 2;
+    TipoConta tipoConta = 3;
+    string identificadorPix = 4;
+    google.protobuf.Timestamp criadoEm = 5;
+  }
+
+  string identificadorCliente = 1;
+  repeated ChavePixDetalhesClienteResponse chavePixDetalhesClienteResponse = 2;
 }

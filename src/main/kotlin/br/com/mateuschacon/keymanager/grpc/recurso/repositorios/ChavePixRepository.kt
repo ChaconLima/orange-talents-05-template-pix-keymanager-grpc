@@ -9,5 +9,6 @@ import java.util.*
 interface ChavePixRepository: JpaRepository<ChavePix, UUID> {
     fun findByValor(valor: String): Optional<ChavePix>
     fun findByIdAndIdentificadorCliente(idChavePix: UUID, idCliente: String): Optional<ChavePix>
+    fun findByIdentificadorCliente(identificadorCliente: String): List<ChavePix>
 
 }
