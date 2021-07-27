@@ -6,7 +6,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
 
-@Client(value = "http://localhost:8082")
+@Client(value = "\${bcb.pix.url}")
 interface SistemaPixdoBcbClient {
 
     @Post(
