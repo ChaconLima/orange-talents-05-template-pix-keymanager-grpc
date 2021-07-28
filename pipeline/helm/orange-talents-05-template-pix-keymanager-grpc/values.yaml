@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  pullPolicy: IfNotPresent
+  repository: public.ecr.aws/i2c7a5l2/mateuschacon/orange-talents-05-template-pix-keymanager-grpc
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
@@ -80,3 +80,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+application:
+  DB_URI: jdbc:mysql://db-mateuschacon-ot5.chpeyn5uxxax.us-east-1.rds.amazonaws.com/pix_grpc?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+  DB_USER: root
+  DB_PASSWORD: H2ParOy3cvGpyZqitCJa
+  ITAU_URL: http://internal-a0056f1bc61dd472ab8af70597036b6c-721953980.sa-east-1.elb.amazonaws.com
+  BCB_URL: http://internal-abfe0883c77dd427ab0997441a62306b-1365683537.sa-east-1.elb.amazonaws.com

@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 50051
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -46,6 +46,11 @@ spec:
               path: /
               port: http
           resources:
+          envFrom:
+            - configMapRef:
+                name: orange-talents-05-template-pix-keymanager-grpc-configmap
+            - secretRef:
+                name: orange-talents-05-template-pix-keymanager-grpc-secrets
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

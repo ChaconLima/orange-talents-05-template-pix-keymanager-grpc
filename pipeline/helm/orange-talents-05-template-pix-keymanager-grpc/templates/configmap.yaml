@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orange-talents-05-template-pix-keymanager-grpc-configmap
+data:
+  CONTAINER_DATABASE_URL: "{{ .Values.application.CONTAINER_DATABASE_URL }}"
+  CONTAINER_DATABASE_USERNAME: "{{ .Values.application.CONTAINER_DATABASE_USERNAME }}"
+  ITAU_URL:  "{{ .Values.application.ITAU_URL }}"
+  BCB_URL: "{{ .Values.application.BCB_URL }}"
